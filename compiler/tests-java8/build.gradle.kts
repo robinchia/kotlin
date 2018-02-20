@@ -21,6 +21,9 @@ tasks.withType<KotlinCompile> {
 }
 
 projectTest {
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")
     workingDir = rootDir
