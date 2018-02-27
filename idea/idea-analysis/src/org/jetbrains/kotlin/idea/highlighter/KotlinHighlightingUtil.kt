@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -33,7 +34,7 @@ object KotlinHighlightingUtil {
         }
 
         if (ktFile.isScript()) {
-            return ktFile.virtualFile.scriptDependencies != null
+            return shouldHighlightScript(ktFile)
         }
 
         return ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
@@ -49,9 +50,16 @@ object KotlinHighlightingUtil {
         }
 
         if (ktFile.isScript()) {
-            return ktFile.virtualFile.scriptDependencies != null
+            return shouldHighlightScript(ktFile)
         }
 
         return ProjectRootsUtil.isInProjectSource(ktFile)
+    }
+
+    private fun shouldHighlightScript(ktFile: KtFile): Boolean {
+        if (ktFile.virtualFile.getUserData(IdeScriptReportSink.Reports) != null) {
+            return false
+        }
+        return ktFile.virtualFile.scriptDependencies != null
     }
 }
