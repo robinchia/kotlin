@@ -41,12 +41,13 @@ fun buildLightClass(
         files: Collection<KtFile>,
         generateClassFilter: GenerationState.GenerateClassFilter,
         context: LightClassConstructionContext,
+        debugLocation: () -> String,
         generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
 ): LightClassBuilderResult {
     val project = files.first().project
 
     try {
-        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
+        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files), debugLocation)
         val state = GenerationState.Builder(
                 project,
                 classBuilderFactory,
